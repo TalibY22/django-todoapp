@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse,HttpResponseRedirect
 from .models import todo,item
+from django.urls import reverse
 from .form import create_list
 
 
@@ -9,7 +10,6 @@ def index(response, id):
     ls = todo.objects.get(id=id)
 
     if response.method == "POST":
-        print(response.POST)
         if response.POST.get("save"):
             for item in ls.item_set.all():  # Corrected typo in item_set
                 checkbox_name = "c" + str(item.id)
@@ -48,4 +48,13 @@ def create(response):
 
 #page to view current tasks
 def view(response):
-    return render(response,"main/view.html")
+    return render(response,"main/view.html",{'Todo':todo.objects.all()})
+
+
+
+def delete(response,id):
+    if response.method=='POST':
+     list = todo.objects.get(pk=id)
+     list.delete()
+
+    return render(response,"main/view.html",{'Todo':todo.objects.all()})
